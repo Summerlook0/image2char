@@ -1,34 +1,23 @@
 # image2char
 
-Image-only vision-to-story generator. Upload an image with no caption or context and the configured vision model creates a fictional character profile, backstory, personality, motivations, visual-cue summary, and/or narrative scene.
+A no-API-key, browser-only image-to-story generator. Upload one image and it creates a fictional character profile, personality, backstory, motivations, visual-cue summary, and/or narrative scene.
 
-## Setup
+## Use it on an 8 GB Android phone
 
-1. Install Node.js 18+.
-2. Install dependencies: `npm install`
-3. Copy `.env.example` to `.env` and add an API key.
-4. Start the API: `npm run api`
-5. In another terminal start Vite: `npm run dev`
-6. Open the displayed Vite URL.
+1. Install Node.js on a computer, or use any static hosting service.
+2. Run `npm install`, then `npm run build`.
+3. Publish the generated `dist` folder to a static host (GitHub Pages, Netlify, Cloudflare Pages, or similar).
+4. Open the site in Chrome on Android.
+5. The first generation downloads the small SmolVLM browser model and caches it. Keep Chrome open and use an image under about 4 MB. Later runs reuse the cache.
 
-For production, run `npm run build` followed by `npm start`.
-
-## Configuration
-
-`.env.example`:
-
-```env
-OPENAI_API_KEY=your_key_here
-VISION_MODEL=gpt-4o-mini
-PORT=8787
-```
-
-The server sends the image to the configured OpenAI-compatible vision endpoint and keeps the API key off the browser. Change the endpoint/model adapter in `server.mjs` if you use another provider.
+For local desktop testing, run `npm run dev` and open the displayed URL. No `.env` file, server, or API key is needed.
 
 ## Perchance
 
-Generate a result and click **Perchance**. Paste the copied JavaScript into a Perchance JavaScript section. The exported object provides `character.title`, `character.appearance`, `character.personality`, `character.backstory`, `character.motivations`, and `character.narrative`.
+After generation, click **Perchance** and paste the copied JavaScript into a Perchance JavaScript section. The exported object contains `character.name`, `character.appearance`, `character.personality`, `character.backstory`, `character.motivations`, and `character.narrative`.
 
-## Safety and accuracy
+## Device notes
 
-Backstories and personalities are creative fabrications, not claims about the pictured person. The app avoids identity recognition and unsupported sensitive inferences. It does not provide explicit sexual content, sexualized minors, non-consensual sexual content, or sexualized real-person profiles. Use fictional or consented source material, and avoid uploading private images without permission.
+The app prefers WebGPU and falls back to WebAssembly. Chrome/Android with hardware acceleration is recommended. An 8 GB phone should have enough memory, but the model download and generation can be slow. If Android kills the tab, close other tabs, reduce the image size, and retry. Browser storage is used for the model cache and generated profile history.
+
+Images are processed in the browser and are not sent to a server by this app. The model reports visible cues separately from fictional inventions and does not identify people or infer private sensitive traits.
