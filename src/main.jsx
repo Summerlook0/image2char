@@ -5,7 +5,11 @@ import './styles.css';
 
 env.allowLocalModels = false;
 env.useBrowserCache = true;
-const MODEL = 'onnx-community/SmolVLM-256M-Instruct-ONNX';
+const MODEL_CANDIDATES = [
+  'onnx-community/SmolVLM-256M-Instruct-ONNX',
+  'Xenova/SmolVLM2-500M-Instruct',
+  'Xenova/vit-gpt2'
+];
 const HISTORY_KEY = 'image2char:profiles:v2';
 
 function promptFor(genre, tone, format, mature) {
@@ -62,8 +66,8 @@ async function prepareImage(file) {
 function App() {
   const [image, setImage] = useState('');
   const [genre, setGenre] = useState('Fantasy');
-  const [tone, setTone] = useState('Cinematic');
-  const [format, setFormat] = useState('profile');
+  const [tone, setTone] = useState('Dark');
+  const [format, setFormat] = useState('both');
   const [mature, setMature] = useState(false);
   const [ageConfirmed, setAgeConfirmed] = useState(false);
   const [result, setResult] = useState(null);
@@ -87,9 +91,27 @@ function App() {
     setBusy(true); setError('');
     try {
       if (!worker.current) {
-        setStatus('Loading the offline vision model. The first download is cached for later use…');
-        try { worker.current = await pipeline('image-text-to-text', MODEL, { device: 'webgpu', dtype: 'q4' }); }
-        catch { worker.current = await pipeline('image-text-to-text', MODEL, { device: 'wasm', dtype: 'q4' }); }
+        setStatus('Loading a browser-compatible vision model…');
+        let lastError = null;
+        for (const modelName of MODEL_CANDIDATES) {
+          try {
+            worker.current = await pipeline('image-to-text', modelName, { device: 'webgpu', dtype: 'q4' });
+            break;
+          } catch (e) {
+            lastError = e;
+          }
+        }
+        if (!worker.current) {
+          for (const modelName of MODEL_CANDIDATES) {
+            try {
+              worker.current = await pipeline('image-to-text', modelName, { device: 'wasm', dtype: 'q4' });
+              break;
+            } catch (e) {
+              lastError = e;
+            }
+          }
+        }
+        if (!worker.current) throw lastError || new Error('No compatible image model was available in this browser.');
       }
       setStatus('Reading text bubbles and translating them locally…');
       const output = await worker.current([{ role: 'user', content: [
