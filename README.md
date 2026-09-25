@@ -1,22 +1,34 @@
 # image2char
 
-A polished, local-first image-to-character workbench. Upload an image, add context, choose a genre and tone, then export a fictional character profile as JSON or a Perchance-ready JavaScript object.
+Image-only vision-to-story generator. Upload an image with no caption or context and the configured vision model creates a fictional character profile, backstory, personality, motivations, visual-cue summary, and/or narrative scene.
 
-## Run locally
+## Setup
 
-```bash
-npm install
-npm run dev
+1. Install Node.js 18+.
+2. Install dependencies: `npm install`
+3. Copy `.env.example` to `.env` and add an API key.
+4. Start the API: `npm run api`
+5. In another terminal start Vite: `npm run dev`
+6. Open the displayed Vite URL.
+
+For production, run `npm run build` followed by `npm start`.
+
+## Configuration
+
+`.env.example`:
+
+```env
+OPENAI_API_KEY=your_key_here
+VISION_MODEL=gpt-4o-mini
+PORT=8787
 ```
 
-Then open the Vite URL shown in the terminal. Production builds use `npm run build`.
+The server sends the image to the configured OpenAI-compatible vision endpoint and keeps the API key off the browser. Change the endpoint/model adapter in `server.mjs` if you use another provider.
 
-## Perchance import
+## Perchance
 
-Click **Perchance** after generating a profile. Paste the copied JavaScript into a Perchance generator's JavaScript section, then reference values such as `{{character.name}}`, `{{character.personality}}`, and `{{character.backstory}}` in the generator output. The app also has an **Export** button for JSON if your generator uses imported data.
+Generate a result and click **Perchance**. Paste the copied JavaScript into a Perchance JavaScript section. The exported object provides `character.title`, `character.appearance`, `character.personality`, `character.backstory`, `character.motivations`, and `character.narrative`.
 
-## Privacy and content boundaries
+## Safety and accuracy
 
-Images are previewed locally and are not uploaded by this static app. Profiles are stored in browser local storage. The mature toggle is intended for adult, non-graphic fictional themes only; it does not enable explicit sexual content, sexualized minors, non-consensual sexual content, or sexualized real-person profiles. The current browser-only generator uses image metadata and user-provided notes rather than claiming to infer private facts or identity from pixels.
-
-To add a vision model later, use a server-side provider adapter rather than exposing an API key in the browser. Keep uploaded images private, validate file size/type on the server, and preserve the same content safeguards.
+Backstories and personalities are creative fabrications, not claims about the pictured person. The app avoids identity recognition and unsupported sensitive inferences. It does not provide explicit sexual content, sexualized minors, non-consensual sexual content, or sexualized real-person profiles. Use fictional or consented source material, and avoid uploading private images without permission.
