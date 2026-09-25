@@ -4,11 +4,11 @@ import { env, pipeline } from '@huggingface/transformers';
 import './styles.css';
 
 env.allowLocalModels = false;
+env.allowRemoteModels = true;
 env.useBrowserCache = true;
 const MODEL_CANDIDATES = [
   'onnx-community/SmolVLM-256M-Instruct-ONNX',
-  'Xenova/SmolVLM2-500M-Instruct',
-  'Xenova/vit-gpt2'
+  'Xenova/SmolVLM2-500M-Instruct'
 ];
 const HISTORY_KEY = 'image2char:profiles:v2';
 
